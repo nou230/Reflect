@@ -1,75 +1,45 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تطبيق Reflect</title>
+  <title>Reflect App</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- شاشة تسجيل الدخول -->
-  <section id="login-screen">
-    <div class="login-container">
-      <h1>مرحبًا بك في Reflect</h1>
-      <form id="login-form">
-        <input type="email" id="email" placeholder="البريد الإلكتروني" required>
-        <input type="password" id="password" placeholder="كلمة المرور" required>
-        <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
-        <p>أو</p>
-        <button id="signup-button" class="btn btn-secondary">إنشاء حساب جديد</button>
-      </form>
-    </div>
-  </section>
+  <h1>Reflect - تسجيل الدخول</h1>
 
-  <!-- الشاشة الرئيسية -->
-  <div id="app-content" class="d-none">
-    <header>
-      <h1>تطبيق Reflect</h1>
-      <button id="logout-button" class="btn btn-danger">تسجيل الخروج</button>
-    </header>
-
-    <main>
-      <!-- قسم نشر الوسائط -->
-      <section id="media-upload">
-        <h2>نشر الصور والفيديوهات</h2>
-        <form id="upload-form" enctype="multipart/form-data">
-          <input type="text" id="media-title" placeholder="أضف وصفًا" required>
-          <input type="file" id="media-file" accept="image/*,video/*" required>
-          <select id="media-category">
-            <option value="travel">سفر</option>
-            <option value="projects">مشاريع</option>
-            <option value="education">تعليم</option>
-          </select>
-          <button type="submit">نشر</button>
-        </form>
-        <div id="media-container"></div>
-      </section>
-
-      <!-- قسم المجموعات والدردشة -->
-      <section id="group-chat">
-        <h2>المجموعات والدردشة</h2>
-        <button id="create-group">إنشاء مجموعة جديدة</button>
-        <div id="group-container"></div>
-        <div id="chat-section" class="d-none">
-          <h3>المجموعة: <span id="group-name"></span></h3>
-          <div id="chat-messages"></div>
-          <form id="chat-form">
-            <input type="text" id="chat-input" placeholder="أدخل رسالتك..." required>
-            <button type="submit">إرسال</button>
-          </form>
-        </div>
-      </section>
-
-      <!-- مساعد الذكاء الاصطناعي -->
-      <section id="ai-helper">
-        <h2>مساعد الذكاء الاصطناعي</h2>
-        <input type="text" id="ai-input" placeholder="اسأل مساعد الذكاء الاصطناعي">
-        <button id="ai-submit">إرسال</button>
-        <div id="ai-response"></div>
-      </section>
-    </main>
+  <!-- نموذج تسجيل الدخول باستخدام البريد وكلمة المرور -->
+  <div id="email-password-login">
+    <h2>تسجيل الدخول باستخدام البريد</h2>
+    <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني">
+    <input type="password" id="password" placeholder="أدخل كلمة المرور">
+    <button id="email-signup">تسجيل مستخدم جديد</button>
+    <button id="email-login">تسجيل الدخول</button>
   </div>
 
-  <script src="script.js"></script>
+  <!-- زر تسجيل الدخول باستخدام Google -->
+  <div id="google-login">
+    <h2>أو تسجيل الدخول باستخدام Google</h2>
+    <button id="google-login-btn">تسجيل الدخول باستخدام Google</button>
+  </div>
+
+  <!-- زر تسجيل الدخول كضيف -->
+  <div id="anonymous-login">
+    <h2>أو تسجيل الدخول كضيف</h2>
+    <button id="anonymous-login-btn">تسجيل الدخول كضيف</button>
+  </div>
+
+  <!-- نموذج تسجيل الدخول باستخدام الهاتف -->
+  <div id="phone-login">
+    <h2>تسجيل الدخول باستخدام الهاتف</h2>
+    <input type="tel" id="phone-number" placeholder="أدخل رقم الهاتف">
+    <div id="recaptcha-container"></div>
+    <button id="send-code">إرسال رمز التحقق</button>
+    <input type="text" id="verification-code" placeholder="أدخل رمز التحقق">
+    <button id="verify-code">تأكيد رمز التحقق</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
