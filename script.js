@@ -1,95 +1,94 @@
 // app.js
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-         signInWithPopup, GoogleAuthProvider, signInAnonymously, RecaptchaVerifier, 
-         signInWithPhoneNumber } 
-  from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc } 
+  from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
-// Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAxT8COg5sXyv6FUjQ_8o-P2REI1PBS7WQ",
-  authDomain: "reflect-b604d.firebaseapp.com",
-  projectId: "reflect-b604d",
-  storageBucket: "reflect-b604d.appspot.com",
-  messagingSenderId: "279668724991",
-  appId: "1:279668724991:web:d6eb096d05bc6a4375e8ca",
-  measurementId: "G-9GY993FC5V"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Email/Password Signup
-document.getElementById("email-signup").addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+// تبديل الصفحات
+function navigateTo(page) {
+  document.getElementById("login-page").style.display = "none";
+  document.getElementById("email-login-page").style.display = "none";
+  document.getElementById("app-page").style.display = "none";
+
+  if (page === "email") {
+    document.getElementById("email-login-page").style.display = "block";
+  } else if (page === "app") {
+    document.getElementById("app-page").style.display = "block";
+  }
+}
+
+function goBack() {
+  navigateTo("login");
+}
+
+// تسجيل الدخول بالبريد الإلكتروني
+document.getElementById("email-login-btn").addEventListener("click", () => {
+  navigateTo("app");
+});
+
+// إنشاء مجموعة
+document.getElementById("create-group-btn").addEventListener("click", async () => {
+  const groupName = document.getElementById("group-name").value;
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    alert(`تم إنشاء الحساب بنجاح! المستخدم: ${userCredential.user.email}`);
+    const groupRef = await addDoc(collection(db, "groups"), { name: groupName });
+    alert(`تم إنشاء المجموعة بنجاح! معرف المجموعة: ${groupRef.id}`);
+    document.getElementById("group-name").value = "";
   } catch (error) {
-    alert(`خطأ: ${error.message}`);
+    alert("خطأ أثناء إنشاء المجموعة: " + error.message);
   }
 });
 
-// Email/Password Login
-document.getElementById("email-login").addEventListener("click", async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+// الانضمام إلى مجموعة
+document.getElementById("join-group-btn").addEventListener("click", async () => {
+  const groupId = document.getElementById("group-id").value;
 
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    alert(`تم تسجيل الدخول بنجاح! المستخدم: ${userCredential.user.email}`);
+    currentGroupId = groupId;
+    document.getElementById("current-group-name").textContent = groupId;
+    loadPosts();
   } catch (error) {
-    alert(`خطأ: ${error.message}`);
+    alert("خطأ أثناء الانضمام إلى المجموعة: " + error.message);
   }
 });
 
-// Google Login
-document.getElementById("google-login-btn").addEventListener("click", async () => {
-  const provider = new GoogleAuthProvider();
+// نشر منشور جديد
+document.getElementById("add-post-btn").addEventListener("click", async () => {
+  const content = document.getElementById("post-content").value;
+
   try {
-    const result = await signInWithPopup(auth, provider);
-    alert(`تم تسجيل الدخول باستخدام Google! المستخدم: ${result.user.displayName}`);
+    await addDoc(collection(db, `groups/${currentGroupId}/posts`), { content, timestamp: Date.now() });
+    document.getElementById("post-content").value = "";
+    alert("تم نشر المنشور بنجاح!");
   } catch (error) {
-    alert(`خطأ: ${error.message}`);
+    alert("خطأ أثناء نشر المنشور: " + error.message);
   }
 });
 
-// Anonymous Login
-document.getElementById("anonymous-login-btn").addEventListener("click", async () => {
-  try {
-    const userCredential = await signInAnonymously(auth);
-    alert(`تم تسجيل الدخول كضيف!`);
-  } catch (error) {
-    alert(`خطأ: ${error.message}`);
-  }
-});
+// تحميل المنشورات
+function loadPosts() {
+  const postsContainer = document.getElementById("posts");
+  const postsQuery = collection(db, `groups/${currentGroupId}/posts`);
 
-// Phone Authentication
-const appVerifier = new RecaptchaVerifier("recaptcha-container", {}, auth);
-
-document.getElementById("send-code").addEventListener("click", async () => {
-  const phoneNumber = document.getElementById("phone-number").value;
-
-  try {
-    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
-    alert("تم إرسال رمز التحقق! أدخل الرمز لتأكيد الحساب.");
-    window.confirmationResult = confirmationResult;
-  } catch (error) {
-    alert(`خطأ: ${error.message}`);
-  }
-});
-
-document.getElementById("verify-code").addEventListener("click", async () => {
-  const code = document.getElementById("verification-code").value;
-
-  try {
-    const result = await window.confirmationResult.confirm(code);
-    alert(`تم تسجيل الدخول باستخدام الهاتف! المستخدم: ${result.user.phoneNumber}`);
-  } catch (error) {
-    alert(`خطأ: ${error.message}`);
-  }
-});
+  onSnapshot(postsQuery, (snapshot) => {
+    postsContainer.innerHTML = "";
+    snapshot.forEach((doc) => {
+      const post = doc.data();
+      const postElement = document.createElement("div");
+      postElement.textContent = post.content;
+      postsContainer.appendChild(postElement);
+    });
+  });
+}
