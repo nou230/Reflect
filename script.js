@@ -1,82 +1,95 @@
-// تسجيل الدخول
-document.getElementById("login-form").addEventListener("submit", (e) => {
-  e.preventDefault();
+// app.js
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+         signInWithPopup, GoogleAuthProvider, signInAnonymously, RecaptchaVerifier, 
+         signInWithPhoneNumber } 
+  from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAxT8COg5sXyv6FUjQ_8o-P2REI1PBS7WQ",
+  authDomain: "reflect-b604d.firebaseapp.com",
+  projectId: "reflect-b604d",
+  storageBucket: "reflect-b604d.appspot.com",
+  messagingSenderId: "279668724991",
+  appId: "1:279668724991:web:d6eb096d05bc6a4375e8ca",
+  measurementId: "G-9GY993FC5V"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Email/Password Signup
+document.getElementById("email-signup").addEventListener("click", async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  if (email && password) {
-    alert("تم تسجيل الدخول بنجاح!");
-    document.getElementById("login-screen").classList.add("d-none");
-    document.getElementById("app-content").classList.remove("d-none");
-  } else {
-    alert("يرجى إدخال البريد الإلكتروني وكلمة المرور.");
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    alert(`تم إنشاء الحساب بنجاح! المستخدم: ${userCredential.user.email}`);
+  } catch (error) {
+    alert(`خطأ: ${error.message}`);
   }
 });
 
-document.getElementById("logout-button").addEventListener("click", () => {
-  document.getElementById("login-screen").classList.remove("d-none");
-  document.getElementById("app-content").classList.add("d-none");
-});
+// Email/Password Login
+document.getElementById("email-login").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-// نشر الوسائط
-document.getElementById("upload-form").addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const title = document.getElementById("media-title").value;
-  const file = document.getElementById("media-file").files[0];
-  const category = document.getElementById("media-category").value;
-
-  if (file.size > 10 * 1024 * 1024) {
-    alert("الملف كبير جدًا!");
-    return;
-  }
-
-  const mediaContainer = document.getElementById("media-container");
-  const mediaElement = document.createElement(file.type.startsWith("image/") ? "img" : "video");
-
-  mediaElement.src = URL.createObjectURL(file);
-  mediaElement.controls = true;
-
-  const mediaCard = document.createElement("div");
-  mediaCard.innerHTML = `<h4>${title}</h4><p>التصنيف: ${category}</p>`;
-  mediaCard.appendChild(mediaElement);
-
-  mediaContainer.appendChild(mediaCard);
-});
-
-// المجموعات والدردشة
-document.getElementById("create-group").addEventListener("click", () => {
-  const groupName = prompt("أدخل اسم المجموعة:");
-  if (groupName) {
-    const groupContainer = document.getElementById("group-container");
-    const groupCard = document.createElement("div");
-    groupCard.textContent = groupName;
-    groupCard.addEventListener("click", () => openChat(groupName));
-    groupContainer.appendChild(groupCard);
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    alert(`تم تسجيل الدخول بنجاح! المستخدم: ${userCredential.user.email}`);
+  } catch (error) {
+    alert(`خطأ: ${error.message}`);
   }
 });
 
-function openChat(groupName) {
-  document.getElementById("chat-section").classList.remove("d-none");
-  document.getElementById("group-name").textContent = groupName;
-}
+// Google Login
+document.getElementById("google-login-btn").addEventListener("click", async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    alert(`تم تسجيل الدخول باستخدام Google! المستخدم: ${result.user.displayName}`);
+  } catch (error) {
+    alert(`خطأ: ${error.message}`);
+  }
+});
 
-document.getElementById("chat-form").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const message = document.getElementById("chat-input").value;
-  const chatMessages = document.getElementById("chat-messages");
+// Anonymous Login
+document.getElementById("anonymous-login-btn").addEventListener("click", async () => {
+  try {
+    const userCredential = await signInAnonymously(auth);
+    alert(`تم تسجيل الدخول كضيف!`);
+  } catch (error) {
+    alert(`خطأ: ${error.message}`);
+  }
+});
 
-  const messageElement = document.createElement("div");
-  messageElement.textContent = message;
-  chatMessages.appendChild(messageElement);
+// Phone Authentication
+const appVerifier = new RecaptchaVerifier("recaptcha-container", {}, auth);
 
-  document.getElementById("chat-input").value = "";
-}
+document.getElementById("send-code").addEventListener("click", async () => {
+  const phoneNumber = document.getElementById("phone-number").value;
 
-// مساعد الذكاء الاصطناعي
-document.getElementById("ai-submit").addEventListener("click", () => {
-  const input = document.getElementById("ai-input").value;
-  const responseContainer = document.getElementById("ai-response");
+  try {
+    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+    alert("تم إرسال رمز التحقق! أدخل الرمز لتأكيد الحساب.");
+    window.confirmationResult = confirmationResult;
+  } catch (error) {
+    alert(`خطأ: ${error.message}`);
+  }
+});
 
-  responseContainer.textContent = `تحليل الذكاء الاصطناعي: ${input}`;
+document.getElementById("verify-code").addEventListener("click", async () => {
+  const code = document.getElementById("verification-code").value;
+
+  try {
+    const result = await window.confirmationResult.confirm(code);
+    alert(`تم تسجيل الدخول باستخدام الهاتف! المستخدم: ${result.user.phoneNumber}`);
+  } catch (error) {
+    alert(`خطأ: ${error.message}`);
+  }
 });
