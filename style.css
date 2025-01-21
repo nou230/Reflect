@@ -20,10 +20,10 @@ div {
   background: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  max-width: 400px;
+  max-width: 600px;
 }
 
-input {
+input, textarea {
   width: 90%;
   padding: 10px;
   margin: 10px 0;
@@ -44,4 +44,9 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+#posts-container {
+  margin-top: 20px;
+  text-align: left;
 }
