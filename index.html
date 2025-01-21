@@ -3,41 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reflect App</title>
+  <title>Reflect - تطبيق المجموعات</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Reflect - تسجيل الدخول</h1>
+  <!-- واجهة تسجيل الدخول السلسة -->
+  <div id="login-page" style="display: block;">
+    <h1>Reflect</h1>
+    <p>اختر طريقة تسجيل الدخول</p>
+    <button onclick="navigateTo('email')">تسجيل الدخول بالبريد الإلكتروني</button>
+    <button onclick="navigateTo('google')">تسجيل الدخول باستخدام Google</button>
+    <button onclick="navigateTo('phone')">تسجيل الدخول برقم الهاتف</button>
+    <button onclick="navigateTo('guest')">تسجيل الدخول كضيف</button>
+  </div>
 
-  <!-- نموذج تسجيل الدخول باستخدام البريد وكلمة المرور -->
-  <div id="email-password-login">
-    <h2>تسجيل الدخول باستخدام البريد</h2>
+  <!-- واجهة البريد الإلكتروني -->
+  <div id="email-login-page" style="display: none;">
+    <h1>تسجيل الدخول بالبريد الإلكتروني</h1>
     <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني">
     <input type="password" id="password" placeholder="أدخل كلمة المرور">
-    <button id="email-signup">تسجيل مستخدم جديد</button>
-    <button id="email-login">تسجيل الدخول</button>
+    <button id="email-login-btn">تسجيل الدخول</button>
+    <button onclick="goBack()">عودة</button>
   </div>
 
-  <!-- زر تسجيل الدخول باستخدام Google -->
-  <div id="google-login">
-    <h2>أو تسجيل الدخول باستخدام Google</h2>
-    <button id="google-login-btn">تسجيل الدخول باستخدام Google</button>
-  </div>
+  <!-- واجهة المجموعات والمنشورات -->
+  <div id="app-page" style="display: none;">
+    <h1>Reflect - المجموعات</h1>
 
-  <!-- زر تسجيل الدخول كضيف -->
-  <div id="anonymous-login">
-    <h2>أو تسجيل الدخول كضيف</h2>
-    <button id="anonymous-login-btn">تسجيل الدخول كضيف</button>
-  </div>
+    <!-- إنشاء مجموعة -->
+    <div id="create-group">
+      <h2>إنشاء مجموعة جديدة</h2>
+      <input type="text" id="group-name" placeholder="اسم المجموعة">
+      <button id="create-group-btn">إنشاء المجموعة</button>
+    </div>
 
-  <!-- نموذج تسجيل الدخول باستخدام الهاتف -->
-  <div id="phone-login">
-    <h2>تسجيل الدخول باستخدام الهاتف</h2>
-    <input type="tel" id="phone-number" placeholder="أدخل رقم الهاتف">
-    <div id="recaptcha-container"></div>
-    <button id="send-code">إرسال رمز التحقق</button>
-    <input type="text" id="verification-code" placeholder="أدخل رمز التحقق">
-    <button id="verify-code">تأكيد رمز التحقق</button>
+    <!-- الانضمام إلى مجموعة -->
+    <div id="join-group">
+      <h2>الانضمام إلى مجموعة</h2>
+      <input type="text" id="group-id" placeholder="معرف المجموعة">
+      <button id="join-group-btn">انضمام</button>
+    </div>
+
+    <!-- المنشورات -->
+    <div id="group-posts">
+      <h2>منشورات المجموعة: <span id="current-group-name">لم يتم تحديد مجموعة</span></h2>
+      <div id="new-post">
+        <textarea id="post-content" placeholder="اكتب منشورك هنا..."></textarea>
+        <button id="add-post-btn">نشر</button>
+      </div>
+      <div id="posts-container">
+        <h3>المنشورات:</h3>
+        <div id="posts"></div>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="app.js"></script>
