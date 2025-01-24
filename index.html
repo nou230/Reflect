@@ -3,61 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reflect - تطبيق المجموعات</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Reflect App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f4f6;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+    .btn {
+      display: block;
+      padding: 10px 20px;
+      margin: 10px 0;
+      text-align: center;
+      background-color: #2196F3;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #1976D2;
+    }
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    .shorts-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .short-card {
+      flex: 1 1 calc(33.333% - 15px);
+      background-color: #eee;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    .short-card video {
+      width: 100%;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-  <!-- واجهة تسجيل الدخول السلسة -->
-  <div id="login-page" style="display: block;">
-    <h1>Reflect</h1>
-    <p>اختر طريقة تسجيل الدخول</p>
-    <button onclick="navigateTo('email')">تسجيل الدخول بالبريد الإلكتروني</button>
-    <button onclick="navigateTo('google')">تسجيل الدخول باستخدام Google</button>
-    <button onclick="navigateTo('phone')">تسجيل الدخول برقم الهاتف</button>
-    <button onclick="navigateTo('guest')">تسجيل الدخول كضيف</button>
+  <header>
+    <h1>Reflect App</h1>
+  </header>
+  <div class="container">
+    <h2>Actions</h2>
+    <button class="btn" onclick="loginAsGuest()">Login as Guest</button>
+    <button class="btn" onclick="postContent()">Post Content</button>
+    <button class="btn" onclick="showShorts()">Show Shorts</button>
+    <button class="btn" onclick="viewProfile()">View Profile</button>
+    <button class="btn" onclick="sendMessage()">Send a Message</button>
   </div>
+  <div class="container shorts-container" id="shortsContainer"></div>
 
-  <!-- واجهة البريد الإلكتروني -->
-  <div id="email-login-page" style="display: none;">
-    <h1>تسجيل الدخول بالبريد الإلكتروني</h1>
-    <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني">
-    <input type="password" id="password" placeholder="أدخل كلمة المرور">
-    <button id="email-login-btn">تسجيل الدخول</button>
-    <button onclick="goBack()">عودة</button>
-  </div>
+  <script type="module">
+    // Import Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getFirestore, addDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
-  <!-- واجهة المجموعات والمنشورات -->
-  <div id="app-page" style="display: none;">
-    <h1>Reflect - المجموعات</h1>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxT8COg5sXyv6FUjQ_8o-P2REI1PBS7WQ",
+      authDomain: "reflect-b604d.firebaseapp.com",
+      projectId: "reflect-b604d",
+      storageBucket: "reflect-b604d.appspot.com",
+      messagingSenderId: "279668724991",
+      appId: "1:279668724991:web:d6eb096d05bc6a4375e8ca",
+      measurementId: "G-9GY993FC5V"
+    };
 
-    <!-- إنشاء مجموعة -->
-    <div id="create-group">
-      <h2>إنشاء مجموعة جديدة</h2>
-      <input type="text" id="group-name" placeholder="اسم المجموعة">
-      <button id="create-group-btn">إنشاء المجموعة</button>
-    </div>
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    <!-- الانضمام إلى مجموعة -->
-    <div id="join-group">
-      <h2>الانضمام إلى مجموعة</h2>
-      <input type="text" id="group-id" placeholder="معرف المجموعة">
-      <button id="join-group-btn">انضمام</button>
-    </div>
+    // Login as Guest
+    function loginAsGuest() {
+      alert("Logged in as Guest!");
+    }
 
-    <!-- المنشورات -->
-    <div id="group-posts">
-      <h2>منشورات المجموعة: <span id="current-group-name">لم يتم تحديد مجموعة</span></h2>
-      <div id="new-post">
-        <textarea id="post-content" placeholder="اكتب منشورك هنا..."></textarea>
-        <button id="add-post-btn">نشر</button>
-      </div>
-      <div id="posts-container">
-        <h3>المنشورات:</h3>
-        <div id="posts"></div>
-      </div>
-    </div>
-  </div>
+    // Post Content
+    async function postContent() {
+      const content = prompt("Enter your post content:");
+      if (content) {
+        await addDoc(collection(db, "posts"), {
+          text: content,
+          timestamp: new Date(),
+        });
+        alert("Content posted successfully!");
+      }
+    }
 
-  <script type="module" src="app.js"></script>
+    // Show Shorts
+    async function showShorts() {
+      const shortsContainer = document.getElementById("shortsContainer");
+      shortsContainer.innerHTML = ""; // Clear previous content
+      const querySnapshot = await getDocs(collection(db, "shorts"));
+      querySnapshot.forEach((doc) => {
+        const short = doc.data();
+        const shortCard = document.createElement("div");
+        shortCard.className = "short-card";
+        shortCard.innerHTML = `<video controls src="${short.url}"></video>`;
+        shortsContainer.appendChild(shortCard);
+      });
+    }
+
+    // View Profile
+    function viewProfile() {
+      alert("Profile feature coming soon!");
+    }
+
+    // Send Message
+    function sendMessage() {
+      const message = prompt("Enter your message:");
+      if (message) {
+        alert("Message sent: " + message);
+      }
+    }
+  </script>
 </body>
 </html>
